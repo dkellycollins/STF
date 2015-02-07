@@ -1,6 +1,6 @@
-var container, stats;
+var container;
 
-var camera, scene, renderer;
+var camera, scene, renderer, audio;
 
 var mouseX = 0, mouseY = 0;
 
@@ -9,19 +9,17 @@ var windowHalfY = window.innerHeight / 2;
 var origin = new THREE.Vector3();
 
 
-init();
+initGame();
 animate();
 
+function initGame() {
 
-function init() {
-
-	container = document.createElement( 'div' );
-	document.body.appendChild( container );
+	container = $('#container');
 	
 	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	container.appendChild( renderer.domElement );
+	container.append(renderer.domElement);
 
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
 	camera.position.x = 10;
@@ -42,6 +40,31 @@ function init() {
 	loadAssets();
 
 	window.addEventListener( 'resize', onWindowResize, false );
+}
+
+function initAudio() {
+	window.AudioContext = window.AudioContext || window.webkitAusioContext;
+	audio = new AudioContext();
+
+	var audioSources = [
+		"assets/audio/bg.mp3"
+	];
+
+	var onLoad = function(response){
+		audio.decodeAudioData(request.response, onDecode, onError);
+	};
+
+	var onDecode = function(buffer) {
+		//Handle decoded audio.
+	}
+
+	var onError = function(error) {
+
+	}
+
+	audioSources.forEach(function(source) {
+		$.get(source, onLoad)
+	})
 }
 
 function loadAssets() {
@@ -92,8 +115,8 @@ function onDocumentMouseMove( event ) {
 
 //
 
-function animate() {
-	requestAnimationFrame( animate );
+function animate(time) {
+	requestAnimationFrame(animate);
 	update();
 	render();
 }
@@ -103,7 +126,7 @@ function update() {
 }
 
 function render() {
-	renderer.render( scene, camera );
+	renderer.render(scene, camera);
 }
 
 
