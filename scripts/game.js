@@ -1,6 +1,6 @@
 var container;
 
-var camera, scene, renderer, audio;
+var camera, scene, renderer, audio, board;
 
 var mouseX = 0, mouseY = 0;
 
@@ -37,6 +37,7 @@ function initGame() {
 	scene.add( directionalLight );
 
 	// load models
+	initGameBoard();
 	loadAssets();
 
 	window.addEventListener( 'resize', onWindowResize, false );
@@ -69,7 +70,19 @@ function initAudio() {
 
 function loadAssets() {
 	var assets = [
-		{OBJ: 'assets/chessboard/board.obj', MTL: 'assets/chessboard/board.mtl' }
+		{OBJ: 'assets/chessboard/board.obj', MTL: 'assets/chessboard/board.mtl', onLoad: function(object) {
+			scene.add(object);
+			object.position.y = -0.45;
+		}},
+		{OBJ: 'assets/test_cube/test_cube.obj', MTL: 'assets/test_cube/test_cube.mtl', onLoad: function(object) {
+			board.forEach(function(row) {
+				row.forEach(function(square) {
+					var clone = object.clone();
+					clone.position.copy(square.position);
+					scene.add(clone);
+				});
+			});
+		}}
 	];
 	
 	var onProgress = function ( xhr ) {
@@ -81,17 +94,33 @@ function loadAssets() {
 
 	var onError = function ( xhr ) {
 	};
-	
-	var onLoad = function(object) {
-		scene.add(object);
-	}
 
 	THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 
 	var loader = new THREE.OBJMTLLoader();
 	assets.forEach(function(asset) {
-		loader.load(asset.OBJ, asset.MTL, onLoad, onProgress, onError);
+		loader.load(asset.OBJ, asset.MTL, asset.onLoad, onProgress, onError);
 	});
+}
+
+function initGameBoard() {
+	var x = -3.5,
+		z = -3,
+		padding = 0.22,
+		width = 0.5;
+
+	board = [];
+	for(var i = 0; i < 8; i++) {
+		board[i] = [];
+		for(var j = 0; j < 8; j++) {
+			board[i][j] = {
+				position: new THREE.Vector3(
+					(z + padding) + (i * (2 * padding + width)),
+					0,
+					(x + padding) + (j * (2 * padding + width)))
+			}
+		}
+	}
 }
 
 function onWindowResize() {
