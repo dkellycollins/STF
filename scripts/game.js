@@ -1,69 +1,24 @@
-var container;
-
-var camera, scene, renderer, audio, board, player;
-
-var mouseX = 0, mouseY = 0;
-
-var loadProgress = {};
+var container,
+	camera,
+	baseScene, 
+	scene, 
+	renderer, 
+	audio, 
+	board, 
+	player, 
+	letters = {},
+	goldStack,
+	assetsToLoad,
+	targetWord;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var origin = new THREE.Vector3();
 
-
 initGame();
-animate();
+loadAssets();
 
 function initGame() {
-	var loadAssets = function() {
-		var assets = [
-			{OBJ: 'assets/chessboard/board.obj', MTL: 'assets/chessboard/board.mtl', onLoad: function(object) {
-				scene.add(object);
-				object.position.y = -0.45;
-			}},
-			/*{OBJ: 'assets/test_cube/test_cube.obj', MTL: 'assets/test_cube/test_cube.mtl', onLoad: function(object) {
-				board.forEach(function(row) {
-					row.forEach(function(square) {
-						var clone = object.clone();
-						clone.position.copy(square.position);
-						scene.add(clone);
-					});
-				});
-			}},*/
-			{OBJ: 'assets/mini_box_knight/mini_knight.obj', MTL: 'assets/mini_box_knight/mini_knight.mtl', onLoad: function(object) {
-				object.rotation.y = 45;
-				player.object = object;
-				scene.add(object);
-			}}
-			/*{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/A.mtl', onLoad: function(object) {
-				var x = THREE.Math.randInt(0, 7);
-				var y = THREE.Math.randInt(0, 7);
-				object.rotateY(45);
-				object.position.copy(board[x][y].position);
-				scene.add(object);
-			}},*/
-		];
-
-		var onProgress = function ( xhr ) {
-			if ( xhr.lengthComputable ) {
-				var percentComplete = xhr.loaded / xhr.total * 100;
-
-				console.log( Math.round(percentComplete, 2) + '% downloaded' );
-			}
-		};
-
-		var onError = function ( xhr ) {
-			console.log('Error downloading ' + xhr.currentTarget.responseURL);
-		};
-
-		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
-
-		var loader = new THREE.OBJMTLLoader();
-		assets.forEach(function(asset) {
-			loader.load(asset.OBJ, asset.MTL, asset.onLoad, onProgress, onError);
-		});
-	}
-
 	var initGameBoard = function() {
 		var x = 3.5,
 			z = 3,
@@ -125,8 +80,85 @@ function initGame() {
 
 	initGameBoard();
 	resetPlayer();
-	initScene();
-	loadAssets();
+	initScene();	
+}
+
+function loadAssets() {
+		var onLetterLoad = function(letter, object) {
+			object.rotateY(45);
+			letters[letter] = object;
+		};
+		var assets = [
+			{OBJ: 'assets/chessboard/board.obj', MTL: 'assets/chessboard/board.mtl', onLoad: function(object) {
+				scene.add(object);
+				object.position.y = -0.45;
+			}},
+			/*{OBJ: 'assets/test_cube/test_cube.obj', MTL: 'assets/test_cube/test_cube.mtl', onLoad: function(object) {
+				board.forEach(function(row) {
+					row.forEach(function(square) {
+						var clone = object.clone();
+						clone.position.copy(square.position);
+						scene.add(clone);
+					});
+				});
+			}},*/
+			{OBJ: 'assets/mini_box_knight/mini_knight.obj', MTL: 'assets/mini_box_knight/mini_knight.mtl', onLoad: function(object) {
+				object.rotateY(45);
+				player.object = object;
+				scene.add(object);
+			}},
+			{OBJ: 'assets/alphabet/F.obj', MTL: 'assets/alphabet/F.mtl', onLoad: function(object) {
+				onLetterLoad("F", object);
+			}},
+			/*{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/U.mtl', onLoad: function(object) {
+				onLetterLoad("U", object);
+			}},
+			{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/T.mtl', onLoad: function(object) {
+				onLetterLoad("T", object);
+			}},
+			{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/R.mtl', onLoad: function(object) {
+				onLetterLoad("R", object);
+			}},
+			{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/E.mtl', onLoad: function(object) {
+				onLetterLoad("E", object);
+			}},*/
+			/*{OBJ: 'assets/GoldStacks/GoldStacks.obj', MTL: 'assets/GoldStacks/GoldStacks.mtl', onLoad: function(object) {
+				goldStack = object;
+			}},
+*/		];
+
+		var onProgress = function ( xhr ) {
+			if ( xhr.lengthComputable ) {
+				var percentComplete = xhr.loaded / xhr.total * 100;
+
+				console.log( Math.round(percentComplete, 2) + '% downloaded' );
+			}
+		};
+
+		var onError = function ( xhr ) {
+			console.log('Error downloading ' + xhr.currentTarget.responseURL);
+		};
+
+		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+
+		assetsToLoad = assets.length;
+		var loader = new THREE.OBJMTLLoader();
+		assets.forEach(function(asset) {
+			loader.load(asset.OBJ, asset.MTL, function(object) {
+				asset.onLoad(object);
+				assetsToLoad--;
+				if(assetsToLoad == 0) {
+					onAssetsLoaded();
+				}
+			}, onProgress, onError);
+		});
+	}
+
+function onAssetsLoaded()  {
+	baseScene = scene.clone();
+
+	scrambleWord("F");
+	animate();
 }
 
 function resetPlayer() {
@@ -134,8 +166,26 @@ function resetPlayer() {
 		x:0,
 		y:0,
 		object: (!!player) ? player.object : null,
-		moveCount: 0
+		moveCount: 0,
+		points: 0,
+		word: ""
 	}
+}
+
+function reset() {
+	//Reset the objects in the scene.
+	scene = baseScene.clone();
+
+	//Reset board data
+	board.forEach(function(row) {
+		row.forEach(function (square) {
+			square.item = null;
+		});
+	});
+
+	resetPlayer();
+
+	targetWord = "";
 }
 
 function onWindowResize() {
@@ -171,7 +221,47 @@ function onKeyUp(event) {
 	}
 }
 
-//
+function scrambleWord(word) {
+	word = word || "FUTURE";
+	word = word.toUpperCase();
+	for(var i = 0; i < word.length; i++) {
+		//Get empty random position.
+		var letter = word.charAt(i);
+		var loc = getRandomEmptyLocation();
+
+		var item = letters[letter].clone();
+		board[loc.x][loc.y].item = {
+			letter: letter,
+			points: 100,
+			object: item
+		};
+		item.position.copy(board[loc.x][loc.y].position);
+		scene.add(item);
+	}
+
+	//Add gold in a random location
+	/*var loc = getRandomEmptyLocation();
+	board[loc.x][loc.y].item = {
+		points: 500,
+		object: goldStack
+	};
+	scene.add(goldStack);*/
+
+	targetWord = word;
+}
+
+function getRandomEmptyLocation() {
+	var x, y;
+	do {
+		x = THREE.Math.randInt(0, 7);
+		y = THREE.Math.randInt(0, 7);
+	} while(!!board[x][y].item || (player.x == x && player.y == y));
+
+	return {
+		x: x,
+		y: y
+	};
+}
 
 function animate(time) {
 	requestAnimationFrame(animate);
@@ -184,7 +274,17 @@ function update() {
 		player.object.position.copy(board[player.x][player.y].position);
 	}
 
-	
+	var item = board[player.x][player.y].item;
+	if(!!item) {
+		if(!!item.letter) {
+			player.word += item.letter;
+		}
+
+		player.points += item.points;
+		scene.remove(item.object);
+
+		board[player.x][player.y].item = null;
+	}
 }
 
 function render() {
@@ -192,6 +292,27 @@ function render() {
 
 	var $moveCount = $('.moveCount');
 	$moveCount.text(player.moveCount);
+
+	var $points = $('.points');
+	$points.text(player.points);
+
+	var $word = $('.word');
+	$word.text(player.word);
+
+	var $correct = $('.correct');
+	var $incorrect = $('.incorrect');
+	if(player.word.length == targetWord.length) {
+		//Player collected all the letters.
+		var correct = player.word == targetWord;
+		if(correct) {
+			$correct.show();
+		} else {
+			$incorrect.show();
+		}
+	} else {
+		$correct.hide();
+		$incorrect.hide();
+	}
 }
 
 
