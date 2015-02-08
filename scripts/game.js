@@ -54,8 +54,16 @@ function initGame() {
 		/*var ambient = new THREE.AmbientLight( 0x404040 );
 		scene.add(ambient);*/
 
+		/*var areaLight = new THREE.AreaLight(0xffeedd);
+		areaLight.position.set( 0.0001, 10.0001, -18.5001 );
+		areaLight.rotation.set( -0.74719, 0.0001, 0.0001 );
+		areaLight.width = 10;
+		areaLight.height = 1;
+
+		scene.add(areaLight);*/
+
 		var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-		directionalLight.position.set( 0, 1, 1 ).normalize();
+		directionalLight.position.set( 1, 1, 1 ).normalize();
 		scene.add(directionalLight);
 		
 		directionalLight = directionalLight.clone();
