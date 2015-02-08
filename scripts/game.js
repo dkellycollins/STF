@@ -1,6 +1,5 @@
 var container,
-	camera,
-	baseScene, 
+	camera, 
 	scene, 
 	renderer, 
 	audio, 
@@ -12,7 +11,8 @@ var container,
 	targetWord = "Future",
 	levelComplete = 0,
 	audio = {},
-	gainNode;
+	gainNode,
+	prevDir = 38;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -92,7 +92,7 @@ function loadAssets() {
 				OBJ: 'assets/alphabet/' + letter + '.obj',
 				MTL: 'assets/alphabet/' + letter + '.mtl',
 				onLoad: function(object) {
-					object.rotateY(45);
+					object.rotateY(getRadians(75));
 					letters[letter] = object;
 				}
 			};
@@ -112,8 +112,9 @@ function loadAssets() {
 				});
 			}},*/
 			{OBJ: 'assets/mini_box_knight/mini_knight.obj', MTL: 'assets/mini_box_knight/mini_knight.mtl', onLoad: function(object) {
-				object.rotateY(45);
+				//object.rotateY(getRadians(45));
 				player.object = object;
+				object.rotateY(getRadians(-90));
 				scene.add(object);
 			}},
 			letterAsset('A'),
@@ -207,14 +208,8 @@ function loadAssets() {
 	}
 
 function onAssetsLoaded()  {
-	baseScene = scene.clone();
-
 	scrambleWord();
 	animate();
-	/*audio["bg"].start(0);
-	setInterval(function() {
-		audio["bg"].start(0);
-	}, audio["bg"].buffer.duration * 1000);*/
 }
 
 function resetPlayer() {
@@ -264,6 +259,7 @@ function onWindowResize() {
 
 }
 
+
 function onKeyDown(event) {
 	if(event.keyCode < 37 || event.keyCode > 40 || levelComplete) {
 		return;
@@ -283,8 +279,41 @@ function onKeyDown(event) {
 	player.y = THREE.Math.clamp(player.y, 0, 7);
 
 	if(prevY != player.y || prevX != player.x) {
-		player.moveCount++;	
+		player.moveCount++;
+		player.object.rotateY(getRotation(prevDir, event.keyCode));
+		prevDir = event.keyCode;	
 	}
+}
+
+function getRotation(prevDir, dir) {
+	var rotations = {
+		37: { //Left
+			37: 0, //Left
+			38: getRadians(-90), //Up
+			39: getRadians(180), //Right
+			40: getRadians(90) //Down
+		},
+		38: { //Up
+			37: getRadians(90), //Left
+			38: 0, //Up
+			39: getRadians(-90), //Right
+			40: getRadians(180) //Down
+		},
+		39: { //Right
+			37: getRadians(180), //Left
+			38: getRadians(90), //Up
+			39: 0, //Right
+			40: getRadians(-90) //Down
+		},
+		40: { //Down
+			37: getRadians(-90), //Left
+			38: getRadians(180), //Up
+			39: getRadians(90), //Right
+			40: 0 //Down
+		}
+	}
+
+	return rotations[prevDir][dir];
 }
 
 function scrambleWord(word) {
@@ -412,4 +441,8 @@ function getRandomWord(callback) {
 	$.get(url, function(response) {
 		callback(response.word);
 	});
+}
+
+function getRadians(degress) {
+	return degress * (Math.PI / 180);
 }

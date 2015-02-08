@@ -1,22 +1,22 @@
-# Blender MTL File: 'mini_knight.blend'
+# Blender MTL File: 'None'
 # Material Count: 2
 
-newmtl Material
-Ns 96.078431
+newmtl Material.001
+Ns 92.156863
 Ka 0.000000 0.000000 0.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
+Kd 0.512000 0.512000 0.512000
+Ks 0.250000 0.250000 0.250000
 Ni 1.000000
 d 1.000000
-illum 0
+illum 2
 map_Kd mini_knight.png
 
-newmtl Material__3
-Ns 7.843137
+newmtl Material.001_mini_knight.png
+Ns 92.156863
 Ka 0.000000 0.000000 0.000000
-Kd 0.000000 0.000000 0.000000
-Ks 0.000000 0.000000 0.000000
-Ni 1.500000
-d 0.000000
-illum 0
+Kd 0.512000 0.512000 0.512000
+Ks 0.250000 0.250000 0.250000
+Ni 1.000000
+d 1.000000
+illum 2
 map_Kd mini_knight.png
