@@ -51,31 +51,12 @@ function initGame() {
 		// scene
 		scene = new THREE.Scene();
 
-		/*var ambient = new THREE.AmbientLight( 0x404040 );
-		scene.add(ambient);*/
-
-		/*var areaLight = new THREE.AreaLight(0xffeedd);
-		areaLight.position.set( 0.0001, 10.0001, -18.5001 );
-		areaLight.rotation.set( -0.74719, 0.0001, 0.0001 );
-		areaLight.width = 10;
-		areaLight.height = 1;
-
-		scene.add(areaLight);*/
-
-		var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-		directionalLight.position.set( 1, 1, 1 ).normalize();
-		scene.add(directionalLight);
-		
-		directionalLight = directionalLight.clone();
-		directionalLight.position.set( 0, -1, -1 ).normalize();	
+		var directionalLight = new THREE.DirectionalLight( 0xffeedd, 0.7 );
+		directionalLight.position.set( 5, 5, 5 );
 		scene.add(directionalLight);
 
 		directionalLight = directionalLight.clone();
-		directionalLight.position.set( 0, -1, 0).normalize();	
-		scene.add(directionalLight);
-
-		directionalLight = directionalLight.clone();
-		directionalLight.position.set( 0, 1, 0).normalize();	
+		directionalLight.position.set( 0, 5, 0);	
 		scene.add(directionalLight);
 	}
 
@@ -110,17 +91,7 @@ function loadAssets() {
 				scene.add(object);
 				object.position.y = -0.45;
 			}},
-			/*{OBJ: 'assets/test_cube/test_cube.obj', MTL: 'assets/test_cube/test_cube.mtl', onLoad: function(object) {
-				board.forEach(function(row) {
-					row.forEach(function(square) {
-						var clone = object.clone();
-						clone.position.copy(square.position);
-						scene.add(clone);
-					});
-				});
-			}},*/
 			{OBJ: 'assets/mini_box_knight/mini_knight.obj', MTL: 'assets/mini_box_knight/mini_knight.mtl', onLoad: function(object) {
-				//object.rotateY(getRadians(45));
 				player.object = object;
 				object.rotateY(getRadians(-90));
 				scene.add(object);
@@ -345,14 +316,6 @@ function scrambleWord(word) {
 		scene.add(item);
 	}
 
-	//Add gold in a random location
-	/*var loc = getRandomEmptyLocation();
-	board[loc.x][loc.y].item = {
-		points: 500,
-		object: goldStack
-	};
-	scene.add(goldStack);*/
-
 	targetWord = word;
 }
 
@@ -433,15 +396,10 @@ function check() {
 }
 
 function mute() {
+	gainNode.gain.value = !gainNode.gain.value;
+
 	var $mute = $('.mute');
-	if(gainNode.gain.value == 0) {
-		gainNode.gain.value = 1;
-		$mute.text('Mute');	
-	} else {
-		gainNode.gain.value = 0;
-		$mute.text('Unmute');
-	}
-	
+	$mute.toggle();
 }
 
 function getRandomWord(callback) {
