@@ -110,18 +110,18 @@ function loadAssets() {
 			{OBJ: 'assets/alphabet/F.obj', MTL: 'assets/alphabet/F.mtl', onLoad: function(object) {
 				onLetterLoad("F", object);
 			}},
-			/*{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/U.mtl', onLoad: function(object) {
+			{OBJ: 'assets/alphabet/U.obj', MTL: 'assets/alphabet/U.mtl', onLoad: function(object) {
 				onLetterLoad("U", object);
 			}},
-			{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/T.mtl', onLoad: function(object) {
+			{OBJ: 'assets/alphabet/T.obj', MTL: 'assets/alphabet/T.mtl', onLoad: function(object) {
 				onLetterLoad("T", object);
 			}},
-			{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/R.mtl', onLoad: function(object) {
+			{OBJ: 'assets/alphabet/R.obj', MTL: 'assets/alphabet/R.mtl', onLoad: function(object) {
 				onLetterLoad("R", object);
 			}},
-			{OBJ: 'assets/alphabet/A.obj', MTL: 'assets/alphabet/E.mtl', onLoad: function(object) {
+			{OBJ: 'assets/alphabet/E.obj', MTL: 'assets/alphabet/E.mtl', onLoad: function(object) {
 				onLetterLoad("E", object);
-			}},*/
+			}},
 			/*{OBJ: 'assets/GoldStacks/GoldStacks.obj', MTL: 'assets/GoldStacks/GoldStacks.mtl', onLoad: function(object) {
 				goldStack = object;
 			}},
@@ -157,7 +157,7 @@ function loadAssets() {
 function onAssetsLoaded()  {
 	baseScene = scene.clone();
 
-	scrambleWord("F");
+	scrambleWord();
 	animate();
 }
 
