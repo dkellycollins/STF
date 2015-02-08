@@ -91,7 +91,7 @@ function initGame() {
 	container.append(renderer.domElement);
 
 	window.addEventListener('resize', onWindowResize, false);
-	window.addEventListener('keyup', onKeyUp, false);
+	window.addEventListener('keydown', onKeyDown, false);
 
 	initGameBoard();
 	resetPlayer();
@@ -155,9 +155,7 @@ function loadAssets() {
 			letterAsset('Y'),
 			letterAsset('Z'),
 		];
-		var audioSources = [
-			"assets/audio/606354_Showing-Off.mp3"
-		];
+		var audioSources = [];
 
 		var onProgress = function ( xhr ) {
 			if ( xhr.lengthComputable ) {
@@ -174,6 +172,16 @@ function loadAssets() {
 		var loadAudio = function() {
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			var context = new AudioContext();
+			
+			gainNode = context.createGain();
+			gainNode.connect(context.destination);
+			gainNode.gain.value = 0; //Start muted.
+
+			var $audio = $('#bg');
+			var bgSource = context.createMediaElementSource($audio[0]);
+			bgSource.connect(gainNode);
+			audio['bg'] = bgSource;
+
 			var bufferLoader = new BufferLoader(
 			    context,
 			    audioSources,
@@ -182,10 +190,6 @@ function loadAssets() {
 			bufferLoader.load();
 
 			function finishedLoading(bufferList) {
-			  gainNode = context.createGain();
-			  gainNode.connect(context.destination);
-			  gainNode.gain.value = 0; //Start muted.
-
 			  audio["bg"] = context.createBufferSource();
 			  audio["bg"].buffer = bufferList[0];
 			  audio["bg"].connect(gainNode);
@@ -219,10 +223,10 @@ function onAssetsLoaded()  {
 
 	scrambleWord();
 	animate();
-	audio["bg"].start(0);
+	/*audio["bg"].start(0);
 	setInterval(function() {
 		audio["bg"].start(0);
-	}, audio["bg"].buffer.duration * 1000);
+	}, audio["bg"].buffer.duration * 1000);*/
 }
 
 function resetPlayer() {
@@ -270,10 +274,12 @@ function onWindowResize() {
 
 }
 
-function onKeyUp(event) {
+function onKeyDown(event) {
 	if(event.keyCode < 37 || event.keyCode > 40 || levelComplete) {
 		return;
 	}
+
+	event.preventDefault();
 
 	var prevX = player.x;
 	var prevY = player.y;
