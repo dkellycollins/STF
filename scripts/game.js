@@ -14,18 +14,6 @@ var container,
 	audio = {},
 	gainNode;
 
-var words = [
-	"Lorem",
-	"Ipsum",
-	"simply",
-	"dummy",
-	"text",
-	"printing",
-	"typesetting",
-	"industry",
-	"abcdefghijklmnopqrstuvwxyz"
-];
-
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var origin = new THREE.Vector3();
@@ -241,8 +229,6 @@ function resetPlayer() {
 }
 
 function reset(getNewWord) {
-	levelComplete = 0;
-
 	//Reset board data
 	board.forEach(function(row) {
 		row.forEach(function (square) {
@@ -255,9 +241,13 @@ function reset(getNewWord) {
 
 	resetPlayer();
 	if(getNewWord) {
-		scrambleWord(words.shift());
+		getRandomWord(function(word) {
+			scrambleWord(word);
+			levelComplete = 0;
+		});
 	} else {
 		scrambleWord();
+		levelComplete = 0;
 	}
 	
 }
@@ -417,4 +407,9 @@ function mute() {
 	
 }
 
-
+function getRandomWord(callback) {
+	var url = 'http://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=false&minCorpusCount=10000&maxCorpusCount=-1&minDictionaryCount=20&maxDictionaryCount=-1&minLength=5&maxLength=10&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
+	$.get(url, function(response) {
+		callback(response.word);
+	});
+}
