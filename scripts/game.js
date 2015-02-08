@@ -12,7 +12,8 @@ var container,
 	levelComplete = 0,
 	audio = {},
 	gainNode,
-	prevDir = 38;
+	prevDir = 38
+	time = 0;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -188,6 +189,7 @@ function loadAssets() {
 
 function onAssetsLoaded()  {
 	scrambleWord();
+	timer();
 	animate();
 }
 
@@ -317,6 +319,7 @@ function scrambleWord(word) {
 	}
 
 	targetWord = word;
+	time = 0;
 }
 
 function getRandomEmptyLocation() {
@@ -369,7 +372,7 @@ function render() {
 	$moveCount.text(player.moveCount);
 
 	var $points = $('.points');
-	$points.text(player.points);
+	$points.text(time);
 
 	var $word = $('.word');
 	$word.text(player.word);
@@ -411,4 +414,14 @@ function getRandomWord(callback) {
 
 function getRadians(degress) {
 	return degress * (Math.PI / 180);
+}
+
+function timer() {
+	setInterval(function() {
+		if(levelComplete) {
+			return;
+		}
+
+		time++;
+	}, 1000);
 }
