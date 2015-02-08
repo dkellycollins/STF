@@ -184,7 +184,7 @@ function loadAssets() {
 			function finishedLoading(bufferList) {
 			  gainNode = context.createGain();
 			  gainNode.connect(context.destination);
-			  gainNode.gain.value = 0.5;
+			  gainNode.gain.value = 0; //Start muted.
 
 			  audio["bg"] = context.createBufferSource();
 			  audio["bg"].buffer = bufferList[0];
@@ -220,6 +220,9 @@ function onAssetsLoaded()  {
 	scrambleWord();
 	animate();
 	audio["bg"].start(0);
+	setInterval(function() {
+		audio["bg"].start(0);
+	}, audio["bg"].buffer.duration * 1000);
 }
 
 function resetPlayer() {
@@ -397,10 +400,13 @@ function check() {
 }
 
 function mute() {
+	var $mute = $('.mute');
 	if(gainNode.gain.value == 0) {
-		gainNode.gain.value = 0.5;	
+		gainNode.gain.value = 1;
+		$mute.text('Mute');	
 	} else {
 		gainNode.gain.value = 0;
+		$mute.text('Unmute');
 	}
 	
 }
