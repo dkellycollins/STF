@@ -1,18 +1,20 @@
 <html>
 	<head>
 		<title>Securing the Future</title>
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
 		<style>
-			body { margin: 0; color: white; background-color: black;}
+			body { margin: 0; color: white; background-color: black; font-family: 'Orbitron', sans-serif;}
 			canvas { width: 100%; height: 100% }
 			a:link { color: #00DE66 }
 			a:visited { color: #00DE66; }
 			a:hover { color: #00B854;}
 			a:active{color:#00B854;}
-			.gameText {position: absolute; width: 100%;}
-			.statsContainer { float: left; margin-left: 10px;}
+			.gameText {position: absolute; width: 100%; text-align: center;}
+			.statsContainer { float: left; margin-left: 10px; text-align: left;}
 			.correct { color: green; display: none;}
 			.incorrect { color: red; display: none;}
-			.instructions { float: right; text-align: right; margin-right: 10px;}
+			.instructions { float: right; text-align: right; margin-right: 10px; max-width: 300px;}
 			.credits {text-align: center;}
 		</style>
 	</head>
@@ -20,6 +22,7 @@
 		<div id="container">
 			<div class="gameText">
 				<h1>Securing the Future</h1>
+				<span>KSU Game Jam 2015</span>
 				<div>
 					<div class="statsContainer">
 						<div>
@@ -34,8 +37,8 @@
 							<span class="incorrect">INCORRECT!</span>
 						</div>
 						<div>
-							<button class="correct incorrect" onclick="reset();">Play Again</button>
-							<button class="correct" onclick="reset(true);">New Word</button>
+							<button class="correct incorrect" onclick="reset();">Play Again <i class="fa"></i></button>
+							<button class="correct" onclick="reset(true);">New Word <i class="fa"></i></button>
 						</div>
 					</div>
 					<div class="instructions">
@@ -43,7 +46,7 @@
 						<div>Arrow keys to move.</div>
 						<div>Collect to letters in the correct order to spell the word.</div>
 						<div>
-							<button class="mute" onclick="mute();">Unmute</button>
+							<button class="mute" onclick="mute();">Unmute <i class="fa"></i></button>
 						</div>
 					</div>	
 				</div>
