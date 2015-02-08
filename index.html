@@ -6,8 +6,8 @@
 			canvas { width: 100%; height: 100% }
 			.gameText {position: absolute; width: 100%;}
 			.statsContainer { float: left; margin-left: 10px;}
-			.correct { color: green;}
-			.incorrect { color: red;}
+			.correct { color: green; display: none;}
+			.incorrect { color: red; display: none;}
 			.instructions { float: right; text-align: right; margin-right: 10px;}
 		</style>
 	</head>
@@ -28,11 +28,18 @@
 							<span class="correct">CORRECT!</span>
 							<span class="incorrect">INCORRECT!</span>
 						</div>
+						<div>
+							<button class="correct incorrect" onclick="reset();">Play Again</button>
+							<button class="correct" onclick="reset(true);">New Word</button>
+						</div>
 					</div>
 					<div class="instructions">
 						<h3 style="margin: 0;">Instructions:</h3>
 						<div>Arrow keys to move.</div>
 						<div>Collect to letters in the correct order to spell the word.</div>
+						<div>
+							<button onclick="mute();">Mute</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -45,6 +52,7 @@
 		<script src="scripts/lib/threejs/MTLLoader.js"></script>
 		<script src="scripts/lib/threejs/OBJMTLoader.js"></script>
 		<script src="scripts/lib/threejs/Detector.js"></script>
+		<script src="scripts/bufferLoader.js"></script>
 		<script src="scripts/game.js"></script>
 	</body>
 </html>

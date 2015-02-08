@@ -9,7 +9,10 @@ var container,
 	letters = {},
 	goldStack,
 	assetsToLoad,
-	targetWord = "Future";
+	targetWord = "Future",
+	levelComplete = 0,
+	audio = {},
+	gainNode;
 
 var words = [
 	"Lorem",
@@ -152,6 +155,9 @@ function loadAssets() {
 			letterAsset('Y'),
 			letterAsset('Z'),
 		];
+		var audioSources = [
+			"assets/audio/606354_Showing-Off.mp3"
+		];
 
 		var onProgress = function ( xhr ) {
 			if ( xhr.lengthComputable ) {
@@ -165,9 +171,35 @@ function loadAssets() {
 			console.log('Error downloading ' + xhr.currentTarget.responseURL);
 		};
 
+		var loadAudio = function() {
+			window.AudioContext = window.AudioContext || window.webkitAudioContext;
+			var context = new AudioContext();
+			var bufferLoader = new BufferLoader(
+			    context,
+			    audioSources,
+			    finishedLoading);
+
+			bufferLoader.load();
+
+			function finishedLoading(bufferList) {
+			  gainNode = context.createGain();
+			  gainNode.connect(context.destination);
+			  gainNode.gain.value = 0.5;
+
+			  audio["bg"] = context.createBufferSource();
+			  audio["bg"].buffer = bufferList[0];
+			  audio["bg"].connect(gainNode);
+
+			  assetsToLoad -= bufferList.length;
+			  if(assetsToLoad == 0) {
+			  	onAssetsLoaded();
+			  }
+			}
+		};
+
 		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 
-		assetsToLoad = assets.length;
+		assetsToLoad = assets.length + audioSources.length;
 		var loader = new THREE.OBJMTLLoader();
 		assets.forEach(function(asset) {
 			loader.load(asset.OBJ, asset.MTL, function(object) {
@@ -178,6 +210,8 @@ function loadAssets() {
 				}
 			}, onProgress, onError);
 		});
+
+		loadAudio();
 	}
 
 function onAssetsLoaded()  {
@@ -185,6 +219,7 @@ function onAssetsLoaded()  {
 
 	scrambleWord();
 	animate();
+	audio["bg"].start(0);
 }
 
 function resetPlayer() {
@@ -199,8 +234,7 @@ function resetPlayer() {
 }
 
 function reset(getNewWord) {
-	//Reset the objects in the scene.
-	//scene = baseScene.clone();
+	levelComplete = 0;
 
 	//Reset board data
 	board.forEach(function(row) {
@@ -234,7 +268,7 @@ function onWindowResize() {
 }
 
 function onKeyUp(event) {
-	if(event.keyCode < 37 || event.keyCode > 40) {
+	if(event.keyCode < 37 || event.keyCode > 40 || levelComplete) {
 		return;
 	}
 
@@ -306,6 +340,10 @@ function animate(time) {
 }
 
 function update() {
+	if(levelComplete) {
+		return;
+	}
+
 	if(!!player.object) {
 		player.object.position.copy(board[player.x][player.y].position);
 	}
@@ -321,6 +359,8 @@ function update() {
 
 		board[player.x][player.y].item = null;
 	}
+
+	check();
 }
 
 function render() {
@@ -337,18 +377,32 @@ function render() {
 
 	var $correct = $('.correct');
 	var $incorrect = $('.incorrect');
-	if(player.word.length == targetWord.length) {
-		//Player collected all the letters.
-		var correct = player.word == targetWord;
-		if(correct) {
-			$correct.show();
-		} else {
-			$incorrect.show();
-		}
-	} else {
-		$correct.hide();
-		$incorrect.hide();
+	switch(levelComplete) {
+		case 2: $incorrect.show(); break;
+		case 1: $correct.show(); break;
+		default: $incorrect.hide(); $correct.hide(); break;
 	}
+}
+
+function check() {
+	if(!player.word) {
+		levelComplete = 0;
+	} else if(targetWord.indexOf(player.word) != 0) {
+		levelComplete = 2; //Complete, failed;
+	} else if(targetWord.length == player.word.length) {
+		levelComplete = 1; //Complete, success;
+	} else {
+		levelComplete = 0;
+	}
+}
+
+function mute() {
+	if(gainNode.gain.value == 0) {
+		gainNode.gain.value = 0.5;	
+	} else {
+		gainNode.gain.value = 0;
+	}
+	
 }
 
 
