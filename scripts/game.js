@@ -9,7 +9,19 @@ var container,
 	letters = {},
 	goldStack,
 	assetsToLoad,
-	targetWord;
+	targetWord = "Future";
+
+var words = [
+	"Lorem",
+	"Ipsum",
+	"simply",
+	"dummy",
+	"text",
+	"printing",
+	"typesetting",
+	"industry",
+	"abcdefghijklmnopqrstuvwxyz"
+];
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -84,9 +96,15 @@ function initGame() {
 }
 
 function loadAssets() {
-		var onLetterLoad = function(letter, object) {
-			object.rotateY(45);
-			letters[letter] = object;
+		var letterAsset = function(letter) {
+			return {
+				OBJ: 'assets/alphabet/' + letter + '.obj',
+				MTL: 'assets/alphabet/' + letter + '.mtl',
+				onLoad: function(object) {
+					object.rotateY(45);
+					letters[letter] = object;
+				}
+			};
 		};
 		var assets = [
 			{OBJ: 'assets/chessboard/board.obj', MTL: 'assets/chessboard/board.mtl', onLoad: function(object) {
@@ -107,25 +125,33 @@ function loadAssets() {
 				player.object = object;
 				scene.add(object);
 			}},
-			{OBJ: 'assets/alphabet/F.obj', MTL: 'assets/alphabet/F.mtl', onLoad: function(object) {
-				onLetterLoad("F", object);
-			}},
-			{OBJ: 'assets/alphabet/U.obj', MTL: 'assets/alphabet/U.mtl', onLoad: function(object) {
-				onLetterLoad("U", object);
-			}},
-			{OBJ: 'assets/alphabet/T.obj', MTL: 'assets/alphabet/T.mtl', onLoad: function(object) {
-				onLetterLoad("T", object);
-			}},
-			{OBJ: 'assets/alphabet/R.obj', MTL: 'assets/alphabet/R.mtl', onLoad: function(object) {
-				onLetterLoad("R", object);
-			}},
-			{OBJ: 'assets/alphabet/E.obj', MTL: 'assets/alphabet/E.mtl', onLoad: function(object) {
-				onLetterLoad("E", object);
-			}},
-			/*{OBJ: 'assets/GoldStacks/GoldStacks.obj', MTL: 'assets/GoldStacks/GoldStacks.mtl', onLoad: function(object) {
-				goldStack = object;
-			}},
-*/		];
+			letterAsset('A'),
+			letterAsset('B'),
+			letterAsset('C'),
+			letterAsset('D'),
+			letterAsset('E'),
+			letterAsset('F'),
+			letterAsset('G'),
+			letterAsset('H'),
+			letterAsset('I'),
+			letterAsset('J'),
+			letterAsset('K'),
+			letterAsset('L'),
+			letterAsset('M'),
+			letterAsset('N'),
+			letterAsset('O'),
+			letterAsset('P'),
+			letterAsset('Q'),
+			letterAsset('R'),
+			letterAsset('S'),
+			letterAsset('T'),
+			letterAsset('U'),
+			letterAsset('V'),
+			letterAsset('W'),
+			letterAsset('X'),
+			letterAsset('Y'),
+			letterAsset('Z'),
+		];
 
 		var onProgress = function ( xhr ) {
 			if ( xhr.lengthComputable ) {
@@ -172,20 +198,27 @@ function resetPlayer() {
 	}
 }
 
-function reset() {
+function reset(getNewWord) {
 	//Reset the objects in the scene.
-	scene = baseScene.clone();
+	//scene = baseScene.clone();
 
 	//Reset board data
 	board.forEach(function(row) {
 		row.forEach(function (square) {
-			square.item = null;
+			if(!!square.item) {
+				scene.remove(square.item.object);
+				square.item = null;
+			}
 		});
 	});
 
 	resetPlayer();
-
-	targetWord = "";
+	if(getNewWord) {
+		scrambleWord(words.shift());
+	} else {
+		scrambleWord();
+	}
+	
 }
 
 function onWindowResize() {
@@ -222,8 +255,11 @@ function onKeyUp(event) {
 }
 
 function scrambleWord(word) {
-	word = word || "FUTURE";
+	word = word || targetWord;
 	word = word.toUpperCase();
+
+	Math.seedrandom(word);
+
 	for(var i = 0; i < word.length; i++) {
 		//Get empty random position.
 		var letter = word.charAt(i);
