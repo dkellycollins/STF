@@ -3,84 +3,21 @@
 		<title>Securing the Future</title>
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 		<link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
-		<style>
-			body { margin: 0; color: white; background-color: black; font-family: 'Orbitron', sans-serif;}
-			canvas { width: 100%; height: 100% }
-			a:link { color: #00DE66 }
-			a:visited { color: #00DE66; }
-			a:hover { color: #00B854;}
-			a:active{color:#00B854;}
-			.gameText {position: absolute; width: 100%; text-align: center;}
-			.statsContainer { float: left; margin-left: 10px; text-align: left;}
-			.correct { color: green; display: none;}
-			.incorrect { color: red; display: none;}
-			.instructions { float: right; text-align: right; margin-right: 10px; max-width: 300px;}
-			.credits {text-align: center;}
-		</style>
+		<link href="styles/game.css" rel="stylesheet" type="text/css">
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.8.0/lodash.min.js"></script>
+		
+		<script src="/scripts/module.js"></script>
+		
+		<script src="/scripts/directive/render3D.js"></script>
+		
+		<script src="/scripts/controllers/gameCtrl.ts"></script>
 	</head>
-	<body>
-		<div id="container">
-			<div class="gameText">
-				<h1>Securing the Future</h1>
-				<span>KSU Game Jam 2015</span>
-				<div>
-					<div class="statsContainer">
-						<div>
-							Moves: <span class="moveCount"></span>
-						</div>
-						<div>
-							Time: <span class="points"></span>
-						</div>
-						<div>
-							Word: <span class="word"></span>
-							<span class="correct">CORRECT!</span>
-							<span class="incorrect">INCORRECT!</span>
-						</div>
-						<div>
-							<button class="correct incorrect" onclick="reset();">Play Again <i class="fa fa-undo"></i></button>
-							<button class="correct" onclick="reset(true);">New Word <i class="fa fa-share"></i></button>
-						</div>
-					</div>
-					<div class="instructions">
-						<h3 style="margin: 0;">Instructions:</h3>
-						<div>Arrow keys to move.</div>
-						<div>Collect to letters in the correct order to spell the word.</div>
-						<div>
-							<button class="mute" onclick="mute();" style="display: none;">Mute <i class="fa fa-volume-off"></i></button>
-							<button class="mute" onclick="mute();">Unmute <i class="fa fa-volume-up"></i></button>
-						</div>
-					</div>	
-				</div>
-			</div>
-			<audio id="bg" src="assets/audio/606354_Showing-Off.mp3" autoplay loop></audio>
+	<body ng-app="stf">
+		<div ng-controller="GameCtrl" class="controller">
+			<render3D scene="scene" camera="camera"></render3D>
 		</div>
-		<div class="credits">
-			<h3>Credits</h3>
-			<div><span class="label">Created by: </span><a href="dkellycollins.github.io" class="author">Devin Kelly-Collins</a></div>
-			<div><span class="label">Chessboard: </span><a href="http://opengameart.org/content/chess-board" class="author">pennomi</a> and <a href="http://opengameart.org/node/6988">Tiziana</a></div>
-			<div><span class="label">Little Box Knight: </span><a href="http://opengameart.org/content/little-box-knight" class="author">dogchiken</a></div>
-			<div><span class="label">Music (Showing off): </span><a href="http://www.newgrounds.com/audio/listen/606354">Zanzlanz</a></div>
-			<div>Made with <a href="http://threejs.org/">Three.js</a> and <a href="https://www.wordnik.com/">Wordnik</a></div>
-		</div>
-
-		<script src="scripts/lib/seedrandom.js"></script>
-		<script src="scripts/lib/jquery-2.1.3.min.js"></script>
-		<script src="scripts/lib/threejs/three.js"></script>
-		<script src="scripts/lib/threejs/DDSLoader.js"></script>
-		<script src="scripts/lib/threejs/MTLLoader.js"></script>
-		<script src="scripts/lib/threejs/OBJMTLoader.js"></script>
-		<script src="scripts/lib/threejs/Detector.js"></script>
-		<script src="scripts/bufferLoader.js"></script>
-		<script src="scripts/game.js"></script>
-		<script>
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		
-		  ga('create', 'UA-41744442-3', 'auto');
-		  ga('send', 'pageview');
-		
-		</script>
 	</body>
 </html>
