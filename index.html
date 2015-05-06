@@ -1,23 +1,34 @@
 <html>
 	<head>
 		<title>Securing the Future</title>
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-		<link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
 		<link href="styles/game.css" rel="stylesheet" type="text/css">
 		
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.8.0/lodash.min.js"></script>
+		<script src="lib/jquery/dist/jquery.min.js"></script>
+		<script src="lib/lodash/lodash.min.js"></script>
+		<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="lib/angular/angular.min.js"></script>
+		<script src="lib/threejs/build/three.min.js"></script>
+		<script src="lib/threejs/DDSLoader.js"></script>
+		<script src="lib/threejs/MTLLoader.js"></script>
+		<script src="lib/threejs/OBJMTLLoader.js"></script>
 		
-		<script src="/scripts/module.js"></script>
 		
-		<script src="/scripts/directive/render3D.js"></script>
-		
-		<script src="/scripts/controllers/gameCtrl.ts"></script>
+		<script src="scripts/module.js"></script>
+		<script src="scripts/directives/render3D.js"></script>
+		<script src="scripts/directives/resize.js"></script>
+		<script src="scripts/services/assetManager.js"></script>
+		<script src="scripts/services/board.js"></script>
+		<script src="scripts/services/player.js"></script>
+		<script src="scripts/services/timer.js"></script>
+		<script src="scripts/services/wordGenerator.js"></script>
+		<script src="scripts/services/wordnikService.js"></script>
+		<script src="scripts/constants.js"></script>
+		<script src="scripts/controllers/gameCtrl.js"></script>
 	</head>
 	<body ng-app="stf">
-		<div ng-controller="GameCtrl" class="controller">
-			<render3D scene="scene" camera="camera"></render3D>
+		<div ng-controller="GameCtrl" ng-keyup="onKeyUp()">
+			<render3d scene="scene" camera="camera"></render3d>
 		</div>
 	</body>
 </html>

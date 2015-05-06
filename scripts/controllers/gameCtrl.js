@@ -1,32 +1,15 @@
 
 angular.module('stf')
-    .controller('GameCtrl', ['$scope', '$assetManager', '$three', '$lodash', function($scope, $assetManager, $three, _) {
+    .controller('GameCtrl', ['$scope', '$assetManager', '$player', '$board', '$three', '$lodash', function($scope, $assetManager, $player, $board, $three, _) {
         
-        var board,
-            letters,
-            player,
+        var letters,
             origin = new $three.Vector3(),
-            targetWord;
-        
-        function initGameBoard() {
-    		var x = 3.5,
-    			z = 3,
-    			padding = 0.22,
-    			width = 0.5;
-    
-    		board = [];
-    		for(var i = 0; i < 8; i++) {
-    			board[i] = [];
-    			for(var j = 0; j < 8; j++) {
-    				board[i][j] = {
-    					position: new $three.Vector3(
-    						(x + padding) - (j * (2 * padding + width)),
-    						0,
-    						(z + padding) - (i * (2 * padding + width)))
-    				}
-    			}
-    		}
-    	}
+            targetWord,
+            prevDir;
+            
+        function getRadians(degress) {
+        	return degress * (Math.PI / 180);
+        }
         
         function initScene() {
     		var camera = new $three.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
@@ -75,14 +58,14 @@ angular.module('stf')
     		       
     		       var knight = objects.pop();
     		       
-    		       player.object = knight;
+    		       $player.object = knight;
     			   knight.rotateY(getRadians(-90));
     			   $scope.scene.add(knight);
     			   
     			   var la = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     			   
     			   letters = [];
-    			   while(l.length > 0) {
+    			   while(la.length > 0) {
     			       var object = objects.pop();
     			       var l = la.pop();
     			       
@@ -103,12 +86,12 @@ angular.module('stf')
         		var loc = getRandomEmptyLocation();
         
         		var item = letters[letter].clone();
-        		board[loc.x][loc.y].item = {
+        		$board.setItem(loc.x, loc.y, {
         			letter: letter,
         			points: 100,
         			object: item
-        		};
-        		item.position.copy(board[loc.x][loc.y].position);
+        		});
+        		item.position.copy($board.getPosition(loc.x, loc.y));
         		$scope.scene.add(item);
         	}
         
@@ -120,7 +103,7 @@ angular.module('stf')
         	do {
         		x = $three.Math.randInt(0, 7);
         		y = $three.Math.randInt(0, 7);
-        	} while(!!board[x][y].item || (player.x == x && player.y == y));
+        	} while(!!$board.getItem(x, y) || ($player.x == x && $player.y == y));
         
         	return {
         		x: x,
@@ -128,4 +111,64 @@ angular.module('stf')
         	};
         }
         
+        function getRotation(prevDir, dir) {
+        	var rotations = {
+        		37: { //Left
+        			37: 0, //Left
+        			38: getRadians(-90), //Up
+        			39: getRadians(180), //Right
+        			40: getRadians(90) //Down
+        		},
+        		38: { //Up
+        			37: getRadians(90), //Left
+        			38: 0, //Up
+        			39: getRadians(-90), //Right
+        			40: getRadians(180) //Down
+        		},
+        		39: { //Right
+        			37: getRadians(180), //Left
+        			38: getRadians(90), //Up
+        			39: 0, //Right
+        			40: getRadians(-90) //Down
+        		},
+        		40: { //Down
+        			37: getRadians(-90), //Left
+        			38: getRadians(180), //Up
+        			39: getRadians(90), //Right
+        			40: 0 //Down
+        		}
+        	}
+        
+        	return rotations[prevDir][dir];
+        }
+        
+        function onKeyUp($event) {
+            if(event.keyCode < 37 || event.keyCode > 40) {
+        		return;
+        	}
+        
+        	$event.preventDefault();
+        
+        	var prevX = $player.x;
+        	var prevY = $player.y;
+        	switch(event.keyCode) {
+        		case 37: $player.x -= 1; break; //Left
+        		case 38: $player.y += 1; break; //Up
+        		case 39: $player.x += 1; break; //Right
+        		case 40: $player.y -= 1; break; //Down
+        	}
+        	$player.x = $three.Math.clamp($player.x, 0, 7);
+        	$player.y = $three.Math.clamp($player.y, 0, 7);
+        
+        	if(prevY != $player.y || prevX != $player.x) {
+        		$player.moveCount++;
+        		$player.object.rotateY(getRotation(prevDir, $event.keyCode));
+        		prevDir = event.keyCode;	
+        	}
+        }
+        
+        $scope.onKeyUp = _.debounce(onKeyUp, 500);
+        
+        initScene();
+        loadAssets();
     }]);

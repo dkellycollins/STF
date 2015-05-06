@@ -1,16 +1,16 @@
 
 angular.module('stf')
-    .service('assetManager', ['$q', function($q) {
-        THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+    .service('$assetManager', ['$q', '$three', function($q, $three) {
+        $three.Loader.Handlers.add( /\.dds$/i, new $three.DDSLoader() );
         
         return {
-            loadModels: (assets) {
-                var loader = new THREE.OBJMTLLoader();
+            loadAssets: function(assets) {
+                var loader = new $three.OBJMTLLoader();
                 var promises = _.map(assets, function(asset) {
                     var promise = $q.defer();
                     loader.load(asset.OBJ, asset.MTL, 
                         function(object) {
-                            promise.resolve();
+                            promise.resolve(object);
                         },
                         function(xhr) {
                             if ( xhr.lengthComputable ) {
@@ -27,4 +27,4 @@ angular.module('stf')
                 return $q.all(promises);
             }
         }
-    })
+    }]);

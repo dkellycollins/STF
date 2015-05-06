@@ -19,10 +19,10 @@ angular.module('stf')
                     $interval.cancel(promise);
                     promise = null;
                 }
-            }
+            },
             reset: function() {
                 time = 0;
-            }
+            },
             getTime: function() {
                 return time;
             }

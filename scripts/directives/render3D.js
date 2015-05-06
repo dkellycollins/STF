@@ -1,6 +1,6 @@
 
 angular.module('stf')
-    .directive('render3D', ['$window', function($window) {
+    .directive('render3d', ['$window', function($window) {
         return {
             restrict: 'EA',
             scope: {
@@ -33,4 +33,4 @@ angular.module('stf')
                 animate();
             }
         }
-    })
+    }]);

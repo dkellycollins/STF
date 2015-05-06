@@ -20,4 +20,4 @@ angular.module('stf')
                 return $http.get(getRandomWordUrl(params));
             }
         }
-    }];
+    }]);
