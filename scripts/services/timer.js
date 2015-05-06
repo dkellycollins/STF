@@ -1,30 +1,35 @@
 
 angular.module('stf')
-    .service('$timer', ['$interval', function($interval) {
-        var time = 0;
-        var promise;
+    .service('$timer', ['$q', '$interval', function($q, $interval) {
+        var time = 0,
+            intervalPromise;
         
-        function tick() {
-            time++;
+        function timer(endTime, counter) {
+            var deferred = $q.defer();
+                
+            var p = $interval(function () {
+                endTime += counter;
+                if(endTime == 0) {
+                    deferred.resolve();
+                } else {
+                    deferred.notify(endTime);
+                }
+            }, 1000);
+            
+            deferred.promise.cancel = function() {
+                $interval.cancel(p);
+                deferred.reject();
+            }
+            
+            return deferred.promise;
         }
         
         return {
+            countdown: function(endTime) {
+                return timer(endTime, -1);
+            },
             start: function() {
-                if(!promise) {
-                    promise = $interval(tick, 1000);    
-                }
-            },
-            stop: function() {
-                if(!!promise) {
-                    $interval.cancel(promise);
-                    promise = null;
-                }
-            },
-            reset: function() {
-                time = 0;
-            },
-            getTime: function() {
-                return time;
+                return timer(0, 1);
             }
         }
     }])

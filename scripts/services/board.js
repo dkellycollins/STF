@@ -28,7 +28,16 @@ angular.module('stf')
     	
     	return {
     	    getPosition: function(x, y) {
-    	        return board[x][y];
+    	        return board[x][y].position;
+    	    },
+    	    getItem: function(x, y) {
+    	        return board[x][y].item;
+    	    },
+    	    setItem: function(x, y, item) {
+    	        board[x][y].item = item;
+    	    },
+    	    getRandomEmptyLocation: function {
+    	        
     	    },
     	    reset: function() {
     	        initGameBoard();

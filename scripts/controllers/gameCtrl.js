@@ -1,15 +1,11 @@
 
 angular.module('stf')
-    .controller('GameCtrl', ['$scope', '$assetManager', '$player', '$board', '$three', '$lodash', function($scope, $assetManager, $player, $board, $three, _) {
+    .controller('GameCtrl', ['$scope', '$assetManager', '$player', '$board', '$three', '$math', function($scope, $assetManager, $player, $board, $three, $math) {
         
         var letters,
             origin = new $three.Vector3(),
             targetWord,
             prevDir;
-            
-        function getRadians(degress) {
-        	return degress * (Math.PI / 180);
-        }
         
         function initScene() {
     		var camera = new $three.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
@@ -83,7 +79,7 @@ angular.module('stf')
         	for(var i = 0; i < word.length; i++) {
         		//Get empty random position.
         		var letter = word.charAt(i);
-        		var loc = getRandomEmptyLocation();
+        		var loc = $board.getRandomEmptyLocation();
         
         		var item = letters[letter].clone();
         		$board.setItem(loc.x, loc.y, {
@@ -98,43 +94,30 @@ angular.module('stf')
         	targetWord = word;
         }
         
-        function getRandomEmptyLocation() {
-        	var x, y;
-        	do {
-        		x = $three.Math.randInt(0, 7);
-        		y = $three.Math.randInt(0, 7);
-        	} while(!!$board.getItem(x, y) || ($player.x == x && $player.y == y));
-        
-        	return {
-        		x: x,
-        		y: y
-        	};
-        }
-        
         function getRotation(prevDir, dir) {
         	var rotations = {
         		37: { //Left
         			37: 0, //Left
-        			38: getRadians(-90), //Up
-        			39: getRadians(180), //Right
-        			40: getRadians(90) //Down
+        			38: $three.Math.degToRad(-90), //Up
+        			39: $three.Math.degToRad(180), //Right
+        			40: $three.Math.degToRad(90) //Down
         		},
         		38: { //Up
-        			37: getRadians(90), //Left
+        			37: $three.Math.degToRad(90), //Left
         			38: 0, //Up
-        			39: getRadians(-90), //Right
-        			40: getRadians(180) //Down
+        			39: $three.Math.degToRad(-90), //Right
+        			40: $three.Math.degToRad(180) //Down
         		},
         		39: { //Right
-        			37: getRadians(180), //Left
-        			38: getRadians(90), //Up
+        			37: $three.Math.degToRad(180), //Left
+        			38: $three.Math.degToRad(90), //Up
         			39: 0, //Right
-        			40: getRadians(-90) //Down
+        			40: $three.Math.degToRad(-90) //Down
         		},
         		40: { //Down
-        			37: getRadians(-90), //Left
-        			38: getRadians(180), //Up
-        			39: getRadians(90), //Right
+        			37: $three.Math.degToRad(-90), //Left
+        			38: $three.Math.degToRad(180), //Up
+        			39: $three.Math.degToRad(90), //Right
         			40: 0 //Down
         		}
         	}
