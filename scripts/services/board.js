@@ -36,8 +36,17 @@ angular.module('stf')
     	    setItem: function(x, y, item) {
     	        board[x][y].item = item;
     	    },
-    	    getRandomEmptyLocation: function {
-    	        
+    	    getRandomEmptyLocation: function() {
+    	        var x, y;
+            	do {
+            		x = $three.Math.randInt(0, 7);
+            		y = $three.Math.randInt(0, 7);
+            	} while(!!board[x][y]);
+            
+            	return {
+            		x: x,
+            		y: y
+            	};
     	    },
     	    reset: function() {
     	        initGameBoard();

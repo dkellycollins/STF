@@ -8,6 +8,8 @@
 		<script src="lib/lodash/lodash.min.js"></script>
 		<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="lib/angular/angular.min.js"></script>
+		<script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+		<script src="lib/angular-bootstrap/ui-bootstrap.min.js"></script>
 		<script src="lib/threejs/build/three.min.js"></script>
 		<script src="lib/threejs/DDSLoader.js"></script>
 		<script src="lib/threejs/MTLLoader.js"></script>
@@ -15,6 +17,8 @@
 		
 		
 		<script src="scripts/module.js"></script>
+		<script src="scripts/constants.js"></script>
+		<script src="scripts/routes.js"></script>
 		<script src="scripts/directives/render3D.js"></script>
 		<script src="scripts/directives/resize.js"></script>
 		<script src="scripts/services/assetManager.js"></script>
@@ -23,12 +27,10 @@
 		<script src="scripts/services/timer.js"></script>
 		<script src="scripts/services/wordGenerator.js"></script>
 		<script src="scripts/services/wordnikService.js"></script>
-		<script src="scripts/constants.js"></script>
 		<script src="scripts/controllers/gameCtrl.js"></script>
+		<script src="scripts/controllers/loadingCtrl.js"></script>
 	</head>
 	<body ng-app="stf">
-		<div ng-controller="GameCtrl" ng-keyup="onKeyUp()">
-			<render3d scene="scene" camera="camera"></render3d>
-		</div>
+		<ui-view class="container"></ui-view>
 	</body>
 </html>
