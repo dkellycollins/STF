@@ -172,8 +172,8 @@ function loadAssets() {
 
 		var loadDictionary = function(callback) {
 			$.get('assets/dictionary.json', function(response) {
-				dictionary = response.words
-				callback()
+				dictionary = response.words;
+				callback();
 			});
 		}
 
@@ -186,13 +186,12 @@ function loadAssets() {
 				asset.onLoad(object);
 				assetsToLoad--;
 				if(assetsToLoad == 0) {
-					onAssetsLoaded();
+					loadDictionary(onAssetsLoaded);
 				}
 			}, onProgress, onError);
 		});
 
 		loadAudio();
-		loadDictionary();
 	}
 
 function onAssetsLoaded()  {
@@ -414,21 +413,10 @@ function mute() {
 }
 
 function getRandomWord(callback) {
-	if(!dictionary) {
-		$.get('assets/dictionary.json', function(response) {
-			dictionary = response.data
-			callback(pickWord())
-		});
-	}
+	var index = Math.floor((Math.random() * 100) + 1) - 1;
+	var word = dictionary[index];
 
-	callback(pickWord())
-
-	function pickWord() {
-		var index = Math.floor((Math.random() * 100) + 1) - 1;
-		var word = dictionary[index];
-
-		return word.word;	
-	}
+	return word.word;
 
 	/* Wordnik does not support https
 	var url = 'https://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=false&minCorpusCount=10000&maxCorpusCount=-1&minDictionaryCount=20&maxDictionaryCount=-1&minLength=5&maxLength=10&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
