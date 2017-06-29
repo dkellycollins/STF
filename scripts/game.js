@@ -170,6 +170,13 @@ function loadAssets() {
 			}
 		};
 
+		var loadDictionary = function(callback) {
+			$.get('assets/dictionary.json', function(response) {
+				dictionary = response.words
+				callback()
+			});
+		}
+
 		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 
 		assetsToLoad = assets.length + audioSources.length;
@@ -185,6 +192,7 @@ function loadAssets() {
 		});
 
 		loadAudio();
+		loadDictionary();
 	}
 
 function onAssetsLoaded()  {
@@ -406,10 +414,28 @@ function mute() {
 }
 
 function getRandomWord(callback) {
+	if(!dictionary) {
+		$.get('assets/dictionary.json', function(response) {
+			dictionary = response.data
+			callback(pickWord())
+		});
+	}
+
+	callback(pickWord())
+
+	function pickWord() {
+		var index = Math.floor((Math.random() * 100) + 1) - 1;
+		var word = dictionary[index];
+
+		return word.word;	
+	}
+
+	/* Wordnik does not support https
 	var url = 'https://api.wordnik.com:80/v4/words.json/randomWord?hasDictionaryDef=false&minCorpusCount=10000&maxCorpusCount=-1&minDictionaryCount=20&maxDictionaryCount=-1&minLength=5&maxLength=10&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
 	$.get(url, function(response) {
 		callback(response.word);
 	});
+	*/
 }
 
 function getRadians(degress) {
